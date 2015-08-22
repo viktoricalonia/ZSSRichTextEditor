@@ -96,6 +96,7 @@ static Class hackishFixClass = Nil;
 @property (nonatomic, strong) NSMutableArray *customZSSBarButtonItems;
 @property (nonatomic, strong) NSString *internalHTML;
 @property (nonatomic) BOOL editorLoaded;
+@property (nonatomic) BOOL fontLoaded;
 - (NSString *)removeQuotesFromHTML:(NSString *)html;
 - (NSString *)tidyHTML:(NSString *)html;
 - (void)enableToolbarItems:(BOOL)enable;
@@ -195,7 +196,26 @@ static Class hackishFixClass = Nil;
         [self.editorView loadHTMLString:htmlString baseURL:self.baseURL];
         self.resourcesLoaded = YES;
     }
-    
+}
+
+- (void)setFont:(UIFont *)font {
+  _font = font;
+  NSString *jsSetFont = @""
+  "var sheet = document.styleSheets[0];"
+  "var rules = sheet.cssRules || sheet.rules;"
+  "var bodyRule;"
+  "for (i = 0; i < rules.length; i++) {"
+  "if (rules[i].selectorText.toLowerCase() == \"html, body\") {"
+  "bodyRule = rules[i];"
+  "break;"
+  "}"
+  "}"
+  "bodyRule.style.fontFamily = \"%@\";";
+  jsSetFont = [NSString stringWithFormat:jsSetFont, font.familyName];
+  if (self.editorLoaded) {
+    [self.editorView stringByEvaluatingJavaScriptFromString:jsSetFont];
+    self.fontLoaded = YES;
+  }
 }
 
 
@@ -1124,6 +1144,9 @@ static Class hackishFixClass = Nil;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self focusTextEditor];
         });
+    }
+    if (!self.fontLoaded) {
+      self.font = self.font;
     }
 }
 

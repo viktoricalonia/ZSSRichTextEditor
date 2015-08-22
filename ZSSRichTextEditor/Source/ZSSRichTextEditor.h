@@ -91,6 +91,11 @@ static NSString * const ZSSRichTextEditorToolbarNone = @"com.zedsaid.toolbaritem
 @property (nonatomic, strong) UIColor *toolbarItemSelectedTintColor;
 
 /**
+ * Font to be used on editor
+ */
+@property (nonatomic, strong) UIFont *font;
+
+/**
  *  Sets the HTML for the entire editor
  *
  *  @param html  HTML string to set for the editor

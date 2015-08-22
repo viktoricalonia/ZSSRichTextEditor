@@ -33,7 +33,8 @@
     
     // Set the HTML contents of the editor
     [self setHTML:html];
-    
+  
+  self.font = [UIFont fontWithName:@"Optima" size:30];
 }
 
 
